@@ -56,3 +56,21 @@ Para acessar o **webconsole** é preciso adicionar o seguinte endereço em seu `
 O usuário e senha  são **developer** e **4linux**.
 
 Lembre-se de acessar [https://hawkular-metrics.172-27-11-10.nip.io](https://hawkular-metrics.172-27-11-10.nip.io) e aceitar o certificado auto-assinado.
+
+Pouca Memória
+-------------
+
+Caso sua máquina possua menos do que 8 GB de memória RAM ainda é possível continuar o curso utilizando apenas uma máquina e sem o serviço de métricas, faça o seguinte após clonar o repositório:
+
+```
+cd 4542/
+mv Vagrantfile old-Vagrantfile
+mv Allinone Vagrantfile
+vagrant up
+```
+
+Desta forma apenas duas máquinas virtuais serão criadas, a **master** com 4GB de memória rodando todos os serviços nela mesma, e a máquina **extras** que fornece o NFS e o LDAP.
+
+### Métricas
+
+Se por acaso existir mais memória disponível e o aluno queira conhecer o serviço de métricas é possível deixar a **master** com 6GB de memória RAM no arquivo **Allinone**, alterar o parâmetro `openshift_metrics_install_metrics=false` para **true** e iniciar o provisionamento com o comando `vagrant up`.
