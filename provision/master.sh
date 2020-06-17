@@ -1,37 +1,35 @@
 #!/bin/bash
 
-mkdir -p /root/.ssh
-cp /vagrant/files/key.pub /root/.ssh/authorized_keys
+# Dependências
+yum install -y curl vim device-mapper-persistent-data lvm2 epel-release wget git net-tools bind-utils yum-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
 
-HOSTS="$(head -n3 /etc/hosts)"
-echo -e "$HOSTS" > /etc/hosts
-cat >> /etc/hosts <<EOF
-172.27.11.10 okd.example.com
-172.27.11.20 node1.example.com
-172.27.11.30 node2.example.com
-172.27.11.40 extras.example.com
-EOF
-
-if [ "$HOSTNAME" == "extras.example.com" ]; then
-	exit
-fi
-
-yum install -y curl vim device-mapper-persistent-data lvm2 epel-release wget git net-tools bind-utils yum-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct docker-1.13.1
+# Docker mais recente, evita problemas em baixar cockpit
+yum remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce docker-ce-cli containerd.io
 systemctl start docker
+sleep 10
+echo '{                     
+"exec-opts": ["native.cgroupdriver=systemd"],
+"log-driver": "json-file",  
+  "log-opts": {
+  "max-size": "5m",
+  "max-file": "3"
+  }
+}' > /etc/docker/daemon.json
+systemctl enable docker
+systemctl restart docker
+
 #docker pull docker.io/openshift/origin-pod:v3.11
 #docker pull docker.io/openshift/origin-node:v3.11
 #docker pull docker.io/openshift/origin-docker-builder:v3.11.0
-
-if [ "$HOSTNAME" != "okd.example.com" ]; then
-	exit
-fi
-
 #docker pull docker.io/openshift/origin-deployer:v3.11
 #docker pull docker.io/openshift/origin-haproxy-router:v3.11
 #docker pull docker.io/cockpit/kubernetes
 #docker pull docker.io/openshift/origin-docker-registry:v3.11
 #docker pull docker.io/openshift/origin-control-plane:v3.11
 #docker pull quay.io/coreos/etcd:v3.2.22
+
 yum install -y java python-passlib pyOpenSSL PyYAML python-jinja2 python-paramiko python-setuptools python2-cryptography sshpass
 rpm -i https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.5.7-1.el7.ans.noarch.rpm
 cp /vagrant/files/hosts /etc/ansible/hosts
@@ -49,10 +47,3 @@ ansible-playbook /root/openshift-ansible/playbooks/prerequisites.yml
 ansible-playbook /root/openshift-ansible/playbooks/deploy_cluster.yml
 
 htpasswd -Bbc /etc/origin/master/htpasswd developer 4linux
-
-echo <<EOF
-An user named "admin" with password "4linux" was created.
-
-Add the following line in your /etc/hosts:
-172.27.11.10     okd.example.com
-EOF
