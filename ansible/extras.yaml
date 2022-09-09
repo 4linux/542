@@ -1,0 +1,31 @@
+---
+- hosts: extras
+  become: true
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: Garantindo /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+      with_items:
+        - 35.226.184.47 master-aluno-21
+        - 34.135.226.20 node1-aluno-21
+        - 35.192.168.27 node2-aluno-21
+        - 104.154.141.115 extras-aluno-21
+
+    - name: Instalando dependecias
+      ansible.builtin.yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - vim
+        - openldap-servers
+        - openldap-clients
+
+    - name: Start Slapd
+      service:
+        name: slapd
+        state: started
+        enabled: yes

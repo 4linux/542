@@ -1,0 +1,108 @@
+[OSEv3:children]
+masters
+nodes
+extras
+
+[OSEv3:vars]
+ansible_ssh_user=claro
+ansible_ssh_become=true
+
+
+
+[masters]
+
+34.69.63.84             ansible_ssh_private_key_file='~/chave_alunos/aluno01'
+34.136.176.238          ansible_ssh_private_key_file='~/chave_alunos/aluno02'
+35.225.167.183          ansible_ssh_private_key_file='~/chave_alunos/aluno03'
+35.193.38.240           ansible_ssh_private_key_file='~/chave_alunos/aluno04'
+34.133.19.224           ansible_ssh_private_key_file='~/chave_alunos/aluno05'
+34.170.9.48             ansible_ssh_private_key_file='~/chave_alunos/aluno06'
+34.173.14.45            ansible_ssh_private_key_file='~/chave_alunos/aluno07'
+34.68.252.216           ansible_ssh_private_key_file='~/chave_alunos/aluno08'
+34.171.94.255           ansible_ssh_private_key_file='~/chave_alunos/aluno09'
+146.148.108.7           ansible_ssh_private_key_file='~/chave_alunos/aluno10'
+35.184.86.235           ansible_ssh_private_key_file='~/chave_alunos/aluno11'
+34.173.236.6            ansible_ssh_private_key_file='~/chave_alunos/aluno12'
+35.239.130.47           ansible_ssh_private_key_file='~/chave_alunos/aluno13'
+34.71.248.81            ansible_ssh_private_key_file='~/chave_alunos/aluno14'
+34.133.89.183           ansible_ssh_private_key_file='~/chave_alunos/aluno15'
+34.136.240.124          ansible_ssh_private_key_file='~/chave_alunos/aluno16'
+34.123.29.136           ansible_ssh_private_key_file='~/chave_alunos/aluno17'
+34.133.117.92           ansible_ssh_private_key_file='~/chave_alunos/aluno18'
+34.66.116.104           ansible_ssh_private_key_file='~/chave_alunos/aluno19'
+104.154.136.247         ansible_ssh_private_key_file='~/chave_alunos/aluno20'
+
+
+
+
+[nodes]
+
+#Node1
+
+34.123.87.45         ansible_ssh_private_key_file='~/chave_alunos/aluno01' 
+34.135.159.134       ansible_ssh_private_key_file='~/chave_alunos/aluno02' 
+34.67.27.131         ansible_ssh_private_key_file='~/chave_alunos/aluno03' 
+34.121.65.152        ansible_ssh_private_key_file='~/chave_alunos/aluno04' 
+34.136.150.193       ansible_ssh_private_key_file='~/chave_alunos/aluno05' 
+35.238.153.24        ansible_ssh_private_key_file='~/chave_alunos/aluno06' 
+35.193.14.31         ansible_ssh_private_key_file='~/chave_alunos/aluno07' 
+104.197.139.69       ansible_ssh_private_key_file='~/chave_alunos/aluno08' 
+34.72.218.138        ansible_ssh_private_key_file='~/chave_alunos/aluno09' 
+35.225.148.175       ansible_ssh_private_key_file='~/chave_alunos/aluno10' 
+34.170.61.141        ansible_ssh_private_key_file='~/chave_alunos/aluno11' 
+35.238.4.152         ansible_ssh_private_key_file='~/chave_alunos/aluno12' 
+35.193.90.156        ansible_ssh_private_key_file='~/chave_alunos/aluno13' 
+34.68.140.35         ansible_ssh_private_key_file='~/chave_alunos/aluno14' 
+34.171.172.65        ansible_ssh_private_key_file='~/chave_alunos/aluno15' 
+34.134.25.37         ansible_ssh_private_key_file='~/chave_alunos/aluno16' 
+34.134.175.18        ansible_ssh_private_key_file='~/chave_alunos/aluno17' 
+35.226.197.129       ansible_ssh_private_key_file='~/chave_alunos/aluno18' 
+34.134.6.221         ansible_ssh_private_key_file='~/chave_alunos/aluno19' 
+34.132.88.245        ansible_ssh_private_key_file='~/chave_alunos/aluno20'
+
+#Node2
+
+34.135.9.84         ansible_ssh_private_key_file='~/chave_alunos/aluno01' 
+34.121.244.108      ansible_ssh_private_key_file='~/chave_alunos/aluno02' 
+34.71.86.48         ansible_ssh_private_key_file='~/chave_alunos/aluno03' 
+34.67.44.197        ansible_ssh_private_key_file='~/chave_alunos/aluno04' 
+130.211.205.231     ansible_ssh_private_key_file='~/chave_alunos/aluno05' 
+34.171.84.29        ansible_ssh_private_key_file='~/chave_alunos/aluno06' 
+35.184.24.36        ansible_ssh_private_key_file='~/chave_alunos/aluno07' 
+35.232.53.63        ansible_ssh_private_key_file='~/chave_alunos/aluno08' 
+104.154.240.231     ansible_ssh_private_key_file='~/chave_alunos/aluno09' 
+34.71.116.62        ansible_ssh_private_key_file='~/chave_alunos/aluno10'  
+35.224.185.202      ansible_ssh_private_key_file='~/chave_alunos/aluno11' 
+34.135.249.74       ansible_ssh_private_key_file='~/chave_alunos/aluno12' 
+34.122.230.18       ansible_ssh_private_key_file='~/chave_alunos/aluno13' 
+34.173.224.166      ansible_ssh_private_key_file='~/chave_alunos/aluno14' 
+34.136.205.166      ansible_ssh_private_key_file='~/chave_alunos/aluno15' 
+35.192.78.56        ansible_ssh_private_key_file='~/chave_alunos/aluno16' 
+35.232.33.73        ansible_ssh_private_key_file='~/chave_alunos/aluno17' 
+34.71.226.25        ansible_ssh_private_key_file='~/chave_alunos/aluno18' 
+34.172.231.18       ansible_ssh_private_key_file='~/chave_alunos/aluno19' 
+34.173.19.234       ansible_ssh_private_key_file='~/chave_alunos/aluno20' 
+
+
+[extras]
+
+34.135.252.43         ansible_ssh_private_key_file='~/chave_alunos/aluno01'
+34.121.179.55         ansible_ssh_private_key_file='~/chave_alunos/aluno02'
+107.178.216.10          ansible_ssh_private_key_file='~/chave_alunos/aluno03'
+35.222.0.115          ansible_ssh_private_key_file='~/chave_alunos/aluno04'
+34.122.101.143          ansible_ssh_private_key_file='~/chave_alunos/aluno05'
+104.154.119.85         ansible_ssh_private_key_file='~/chave_alunos/aluno06'
+35.222.45.26         ansible_ssh_private_key_file='~/chave_alunos/aluno07'
+34.132.20.192          ansible_ssh_private_key_file='~/chave_alunos/aluno08'
+35.238.62.142         ansible_ssh_private_key_file='~/chave_alunos/aluno09'
+34.170.155.78         ansible_ssh_private_key_file='~/chave_alunos/aluno10'
+130.211.215.174         ansible_ssh_private_key_file='~/chave_alunos/aluno11'
+35.239.39.153         ansible_ssh_private_key_file='~/chave_alunos/aluno12'
+34.136.210.35         ansible_ssh_private_key_file='~/chave_alunos/aluno13'
+34.68.178.92         ansible_ssh_private_key_file='~/chave_alunos/aluno14'
+34.122.223.89         ansible_ssh_private_key_file='~/chave_alunos/aluno15'
+35.184.241.188         ansible_ssh_private_key_file='~/chave_alunos/aluno16'
+34.122.198.178         ansible_ssh_private_key_file='~/chave_alunos/aluno17'
+34.72.157.44         ansible_ssh_private_key_file='~/chave_alunos/aluno18'
+34.121.101.72         ansible_ssh_private_key_file='~/chave_alunos/aluno19'
+34.123.93.43         ansible_ssh_private_key_file='~/chave_alunos/aluno20'

@@ -1,0 +1,73 @@
+---
+- hosts: masters
+  become: true
+  become_user: root
+  become_method: sudo
+  
+  tasks:
+#    - name: Garantindo /etc/hosts
+#      lineinfile:
+#        path: /etc/hosts
+#        line: "{{ item }}"
+#      with_items:
+#        - 35.226.184.47 master-aluno-21
+#        - 34.135.226.20 node1-aluno-21
+#        - 35.192.168.27 node2-aluno-21
+#        - 104.154.141.115 extras-aluno-21
+
+    - name: Instalando dependecias
+      yum:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+        - curl 
+        - vim 
+        - device-mapper-persistent-data 
+        - lvm2 
+        - epel-release 
+        - wget 
+        - git 
+        - net-tools 
+        - bind-utils 
+        - yum-utils 
+        - iptables-services 
+        - bridge-utils 
+        - bash-completion 
+        - kexec-tools 
+        - sos 
+        - psacct 
+        - docker 
+        - python-ipaddress 
+        - PyYAML        
+        - java 
+        - python-passlib 
+        - pyOpenSSL 
+        - python-jinja2 
+        - python-paramiko 
+        - python-setuptools 
+        - python2-cryptography 
+        - sshpass
+        - httpd-tools
+
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Instalando Ansible na Master
+      yum: 
+        name: https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.2-1.el7.ans.noarch.rpm
+        state: present
+
+    - name: Clone openshift-ansible release-3.11
+      ansible.builtin.git:
+        repo: https://github.com/openshift/openshift-ansible.git
+        dest: /root/openshift-ansible
+        single_branch: yes
+        version: release-3.11
+    
+    - name: Atualizando parametro openshift
+      shell: sed -i 's/openshift.common.ip/openshift.common.public_ip/' /root/openshift-ansible/roles/openshift_control_plane/templates/master.yaml.v1.j2
