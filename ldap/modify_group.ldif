@@ -1,0 +1,4 @@
+dn: cn=devops,ou=Groups,dc=example,dc=com
+changetype: modify
+add: memberUid
+memberUid: visualizador

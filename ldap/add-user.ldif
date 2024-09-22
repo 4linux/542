@@ -1,0 +1,12 @@
+dn: uid=visualizador,ou=Users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: top
+cn: visualizador
+sn: visualizador
+uid: visualizador
+uidNumber: 1003
+gidNumber: 5000
+homeDirectory: /home/visualizador
+loginShell: /bin/bash
+userPassword: $(slappasswd -s 4linux)

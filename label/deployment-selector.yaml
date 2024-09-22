@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-selector-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-selector
+  template:
+    metadata:
+      labels:
+        app: nginx-selector
+    spec:
+      nodeSelector:
+        node.kubernetes.io/instance-type: e2-standard-2
+      containers:
+      - name: nginx
+        image: docker.io/bitnami/nginx:latest
