@@ -5,16 +5,25 @@ compute:
 - architecture: amd64
   hyperthreading: Enabled
   name: worker
-  platform: {}
-  replicas: 3
+  platform:
+    gcp:
+      type: e2-standard-2
+      osDisk:
+        diskType: pd-ssd
+        diskSizeGB: 50
+  replicas: 0
 controlPlane:
   architecture: amd64
   hyperthreading: Enabled
   name: master
-  platform: {}
-  replicas: 3
+  platform:
+    gcp:
+      type: e2-standard-4
+      osDisk:
+        diskType: pd-ssd
+        diskSizeGB: 50
+  replicas: 1
 metadata:
-  creationTimestamp: null
   name: okd
 networking:
   clusterNetwork:
@@ -29,5 +38,8 @@ platform:
   gcp:
     projectID: okd4-434513
     region: us-central1
+    network: okd-network
+    controlPlaneSubnet: master-subnet
+    computeSubnet: worker-subnet
 publish: External
 pullSecret: '{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
