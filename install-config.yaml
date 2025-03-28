@@ -1,6 +1,7 @@
 additionalTrustBundlePolicy: Proxyonly
 apiVersion: v1
 baseDomain: 34-45-83-59.nip.io
+credentialsMode: Passthrough
 compute:
 - architecture: amd64
   hyperthreading: Enabled
@@ -42,4 +43,4 @@ platform:
     controlPlaneSubnet: master-subnet
     computeSubnet: worker-subnet
 publish: External
-pullSecret: '{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
+pullSecret: '{"auths":{"quay.io":{"auth":"C4PX5OSCOKP3VI9FI2AVJ8KIRE8I3IDRUN7PTYTESOBS6WZHTSEUYR21IBUPLIZ1"}}}'
