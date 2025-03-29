@@ -1,87 +1,66 @@
 provider "google" {
-  region      = "us-central1"
+  region = "us-central1"
 }
 
-resource "google_compute_firewall" "allow_bastion_host" {
-  name    = "allow-bastion-host"
-  network = "infra-network"
+# ------------------------------------------------------------
+# Firewall para liberar as portas LDAP (389) e NFS (2049)
+# ------------------------------------------------------------
+
+resource "google_compute_firewall" "allow_ldap" {
+  name    = "allow-ldap"
+  network = "default"
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "443"]
+    ports    = ["389"]
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["bastion-host"]
+  target_tags   = ["ldap-server"]
+  direction     = "INGRESS"
+  priority      = 1000
 }
 
-resource "google_compute_address" "bastion_host_internal_ip" {
-  name         = "bastion-host-internal-ip"
-  region       = "us-central1"
-  address_type = "INTERNAL"
-  subnetwork   = "infra-subnet"
+resource "google_compute_firewall" "allow_nfs" {
+  name    = "allow-nfs"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["2049"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["nfs-server"]
+  direction     = "INGRESS"
+  priority      = 1000
 }
+
+# ------------------------------------------------------------
+# Endereços IP internos fixos para servidores LDAP e NFS
+# ------------------------------------------------------------
 
 resource "google_compute_address" "ldap_server_internal_ip" {
   name         = "ldap-server-internal-ip"
   region       = "us-central1"
   address_type = "INTERNAL"
-  subnetwork   = "infra-subnet"
 }
 
 resource "google_compute_address" "nfs_server_internal_ip" {
   name         = "nfs-server-internal-ip"
   region       = "us-central1"
   address_type = "INTERNAL"
-  subnetwork   = "infra-subnet"
 }
 
-resource "google_compute_address" "bastion_host_static_ip" {
-  name   = "bastion-host-static-ip"
-  region = "us-central1"
-}
-
-resource "google_compute_instance" "bastion_host" {
-  name         = "bastion-host"
-  machine_type = "e2-standard-2"
-  zone         = "us-central1-c"
-  tags         = ["bastion-host"]
-
-  boot_disk {
-    initialize_params {
-      image = "ubuntu-os-cloud/ubuntu-2204-lts"
-      size  = "50"
-      type  = "pd-balanced"
-    }
-  }
-
-  network_interface {
-    network = "infra-network"
-    subnetwork = "infra-subnet"
-
-    alias_ip_range {
-      ip_cidr_range = google_compute_address.bastion_host_internal_ip.address
-    }
-    access_config {
-      nat_ip = google_compute_address.bastion_host_static_ip.address
-    }
-
-  }
-
-  metadata = {
-    startup-script = <<-EOF
-      #! /bin/bash
-
-      # Clonar repositorio do curso
-      git clone https://github.com/4linux/542.git
-    EOF
-  }
-}
+# ------------------------------------------------------------
+# Instância LDAP Server
+# ------------------------------------------------------------
 
 resource "google_compute_instance" "ldap_server" {
   name         = "ldap-server"
   machine_type = "e2-standard-2"
   zone         = "us-central1-c"
+  tags         = ["ldap-server"]
 
   boot_disk {
     initialize_params {
@@ -90,39 +69,32 @@ resource "google_compute_instance" "ldap_server" {
       type  = "pd-balanced"
     }
   }
+
   network_interface {
-    network = "infra-network"
-    subnetwork = "infra-subnet"
+    network    = "default"
+    subnetwork = "default"
 
     alias_ip_range {
       ip_cidr_range = google_compute_address.ldap_server_internal_ip.address
     }
+
     access_config {}
   }
 
   metadata = {
     startup-script = <<-EOF
       #! /bin/bash
-
-      # Atualiza a lista de pacotes
       apt-get update -y
-
-      # Instala o OpenLDAP e pacotes associados
       DEBIAN_FRONTEND=noninteractive apt-get install -y slapd ldap-utils
 
-      # Reconfigura o slapd para ser não interativo e define parâmetros básicos
       sudo debconf-set-selections <<< "slapd slapd/password1 password admin_password"
       sudo debconf-set-selections <<< "slapd slapd/password2 password admin_password"
       sudo debconf-set-selections <<< "slapd slapd/domain string example.com"
       sudo debconf-set-selections <<< "slapd shared/organization string Example Organization"
-
-      # Reconfigura o slapd com as opções definidas acima
       DEBIAN_FRONTEND=noninteractive dpkg-reconfigure slapd
 
-      # Modifica o slapd para escutar em todos os IPs
       sed -i 's/^SLAPD_SERVICES=.*/SLAPD_SERVICES="ldap:\/\/\/ ldapi:\/\/\/ ldaps:\/\/\/"/' /etc/default/slapd
 
-      # Cria um arquivo LDIF para adicionar as OUs, o grupo e os usuários
       cat <<EOF_LDIF > /tmp/setup.ldif
       dn: ou=Users,dc=example,dc=com
       objectClass: organizationalUnit
@@ -166,23 +138,22 @@ resource "google_compute_instance" "ldap_server" {
       userPassword: $(slappasswd -s 4linux)
       EOF_LDIF
 
-      # Aplica o arquivo LDIF para adicionar as OUs, o grupo e os usuários
       ldapadd -x -D cn=admin,dc=example,dc=com -w admin_password -f /tmp/setup.ldif
-
-      # Reinicia o serviço para garantir que todas as configurações estejam aplicadas
       systemctl restart slapd
-
-      # Ativa o slapd para iniciar no boot
       systemctl enable slapd
-
     EOF
   }
 }
+
+# ------------------------------------------------------------
+# Instância NFS Server
+# ------------------------------------------------------------
 
 resource "google_compute_instance" "nfs_server" {
   name         = "nfs-server"
   machine_type = "e2-standard-2"
   zone         = "us-central1-c"
+  tags         = ["nfs-server"]
 
   boot_disk {
     initialize_params {
@@ -191,35 +162,27 @@ resource "google_compute_instance" "nfs_server" {
       type  = "pd-ssd"
     }
   }
+
   network_interface {
-    network = "infra-network"
-    subnetwork = "infra-subnet"
+    network    = "default"
+    subnetwork = "default"
 
     alias_ip_range {
       ip_cidr_range = google_compute_address.nfs_server_internal_ip.address
     }
+
     access_config {}
   }
 
   metadata = {
     startup-script = <<-EOF
       #! /bin/bash
-
-      # Atualiza a lista de pacotes e instala o pacote do NFS
       apt-get update
       apt-get install nfs-kernel-server -y
-
-
-      # Cria a pasta nfs e altera as permissoes
       mkdir /nfs
       chown nobody:nogroup /nfs
-
-      # Configura o compartilhamento do servidor NFS
       echo '/nfs *(rw,sync,no_subtree_check,no_root_squash)' >> /etc/exports
-
-      # Aplicar as configurações do servidor NFS
       systemctl restart nfs-kernel-server
-
     EOF
   }
 }
