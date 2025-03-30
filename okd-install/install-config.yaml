@@ -37,10 +37,10 @@ networking:
   - 172.30.0.0/16
 platform:
   gcp:
-    projectID: ID_PROJECT
+    projectID: PROJECT_ID
     region: us-central1
     network: okd-network
     controlPlaneSubnet: master-subnet
     computeSubnet: worker-subnet
-publish: Internal
+publish: External
 pullSecret: '{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
