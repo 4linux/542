@@ -11,5 +11,6 @@ spec:
     configmaps: "10"
     replicationcontrollers: "1"
     persistentvolumeclaims: "15"
+    requests.storage: "15Gi"
     services.loadbalancers: "2"
     services.nodeports: "0"
